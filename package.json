@@ -4,7 +4,7 @@
   "private": true,
   "description": "Prime Academy Ahmedabad — Graphic Design, Video Editing & Motion Graphics Courses Landing Page",
   "scripts": {
-    "build": "echo 'Static landing page ready for deployment'",
+    "build": "node build.js",
     "start": "node serve.js"
   }
 }
