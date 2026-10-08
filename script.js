@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCourseLoopVideos();
   initCurrentYear();
   handleUrlScroll();
+  initMetaPixelTracking();
 });
 
 function handleUrlScroll() {
@@ -196,6 +197,12 @@ function initCourseEnquiryLinks() {
         courseSelect.dispatchEvent(new Event('change'));
       }
 
+      // Meta Pixel: Track Course View / Selection
+      trackMetaPixel('ViewContent', {
+        content_name: courseName || 'Course Track',
+        content_category: 'Course Track Selection'
+      });
+
       if (contactCard) {
         contactCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         // Pulse highlight effect on contact card
@@ -318,6 +325,13 @@ function initLeadForm() {
     const name = nameInput.value.trim();
     const course = courseSelect.value;
 
+    // Meta Pixel: Track WhatsApp Contact Event
+    trackMetaPixel('Contact', {
+      content_name: 'WhatsApp Demo Enquiry',
+      content_category: 'WhatsApp Direct',
+      course: course || 'General'
+    });
+
     let messageText = 'Hi Prime Academy, I visited your website and want to know more about your courses. Please share details and book me a free demo!';
     if (name || course) {
       messageText += `\n\n👤 *Name:* ${name || 'Prospective Student'}\n🎯 *Course:* ${course || 'Creative Courses'}`;
@@ -346,6 +360,14 @@ function initLeadForm() {
       course: courseSelect.value,
       timestamp: new Date().toISOString()
     };
+
+    // Meta Pixel: Track Lead Conversion Event
+    trackMetaPixel('Lead', {
+      content_name: payload.course || 'Creative Course Demo',
+      content_category: 'Course Demo Booking',
+      currency: 'INR',
+      value: 1
+    });
 
     // Send to Google Sheets asynchronously in background with keepalive (zero blocking on UI)
     if (GOOGLE_SHEET_WEB_APP_URL && GOOGLE_SHEET_WEB_APP_URL.trim() !== '') {
@@ -1059,5 +1081,44 @@ function initCourseLoopVideos() {
 // Backward compatibility alias
 function initMotionVideoSound() {
   initCourseLoopVideos();
+}
+
+/* --------------------------------------------------------------------------
+   8. META PIXEL SEAMLESS EVENT TRACKING
+   -------------------------------------------------------------------------- */
+function trackMetaPixel(eventName, params = {}, isCustom = false) {
+  try {
+    if (typeof window.fbq === 'function') {
+      if (isCustom) {
+        window.fbq('trackCustom', eventName, params);
+      } else {
+        window.fbq('track', eventName, params);
+      }
+    }
+  } catch (err) {
+    console.debug('Meta Pixel tracking skipped:', err);
+  }
+}
+
+function initMetaPixelTracking() {
+  // Track all WhatsApp links across the page (Header, Hero, Floating dock, Footer, Cards)
+  document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+    link.addEventListener('click', () => {
+      trackMetaPixel('Contact', {
+        content_name: 'WhatsApp Chat',
+        content_category: 'Messaging'
+      });
+    });
+  });
+
+  // Track all Phone call links across the page (Header, Floating dock, Footer)
+  document.querySelectorAll('a[href^="tel:"]').forEach(link => {
+    link.addEventListener('click', () => {
+      trackMetaPixel('Contact', {
+        content_name: 'Phone Call',
+        content_category: 'Direct Call'
+      });
+    });
+  });
 }
 
