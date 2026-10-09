@@ -411,6 +411,16 @@ function initLeadForm() {
       successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    // Update URL in-place without page reload to /thankyou
+    try {
+      if (window.location.pathname.replace(/\/+$/, '') !== '/thankyou') {
+        window.history.pushState({ page: 'thankyou' }, '', '/thankyou');
+      }
+      trackMetaPixel('PageView');
+    } catch (err) {
+      console.warn('History pushState error:', err);
+    }
+
     submitBtn.classList.remove('is-loading');
     submitBtn.disabled = false;
   });
@@ -423,7 +433,47 @@ function initLeadForm() {
       if (formTitleGroup) formTitleGroup.style.display = 'block';
       form.style.display = 'flex';
       if (successBox) successBox.style.display = 'none';
+
+      // Revert URL in-place back to root without reload if currently on /thankyou
+      try {
+        if (window.location.pathname.replace(/\/+$/, '') === '/thankyou') {
+          window.history.pushState({ page: 'home' }, '', '/');
+        }
+      } catch (err) {
+        console.warn('History pushState error:', err);
+      }
     });
+  }
+
+  // Handle browser back / forward navigation seamlessly
+  window.addEventListener('popstate', () => {
+    const isThankYou = window.location.pathname.replace(/\/+$/, '') === '/thankyou';
+    const formTitleGroup = document.getElementById('form-title-group');
+    if (isThankYou) {
+      if (formTitleGroup) formTitleGroup.style.display = 'none';
+      form.style.display = 'none';
+      if (successBox) {
+        successBox.style.display = 'block';
+        successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    } else {
+      if (formTitleGroup) formTitleGroup.style.display = 'block';
+      form.style.display = 'flex';
+      if (successBox) successBox.style.display = 'none';
+    }
+  });
+
+  // If page is initially loaded directly on /thankyou (e.g., refresh or bookmark)
+  if (window.location.pathname.replace(/\/+$/, '') === '/thankyou') {
+    const formTitleGroup = document.getElementById('form-title-group');
+    if (formTitleGroup) formTitleGroup.style.display = 'none';
+    form.style.display = 'none';
+    if (successBox) {
+      successBox.style.display = 'block';
+      setTimeout(() => {
+        successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 150);
+    }
   }
 }
 
