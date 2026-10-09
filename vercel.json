@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/thankyou",
-      "destination": "/index.html"
+      "destination": "/thankyou.html"
     }
   ],
   "headers": [

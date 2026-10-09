@@ -14,6 +14,7 @@ if (!fs.existsSync(distDir)) {
 // Files to copy from root to dist
 const filesToCopy = [
   'index.html',
+  'thankyou.html',
   'style.css',
   'script.js',
   'google-apps-script.js'
