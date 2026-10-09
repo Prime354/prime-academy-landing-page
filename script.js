@@ -257,12 +257,34 @@ function initLeadForm() {
     if (errorSpan) errorSpan.textContent = '';
   };
 
-  // Restrict phone field to numbers only
-  phoneInput.addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
-    if (e.target.value.length === 10) {
+  // Sanitize phone number (supports raw 10 digits, +91 / 91 prefix, leading 0 from mobile autofill)
+  const sanitizePhoneNumber = (val) => {
+    let digits = (val || '').replace(/\D/g, '');
+    if (digits.length === 12 && digits.startsWith('91')) {
+      digits = digits.slice(2);
+    } else if (digits.length === 11 && digits.startsWith('0')) {
+      digits = digits.slice(1);
+    }
+    return digits.slice(0, 10);
+  };
+
+  const handlePhoneInput = (e) => {
+    const cleaned = sanitizePhoneNumber(e.target.value);
+    e.target.value = cleaned;
+    if (cleaned.length === 10) {
       clearError('user-phone', 'error-phone');
     }
+  };
+
+  phoneInput.addEventListener('input', handlePhoneInput);
+  phoneInput.addEventListener('change', handlePhoneInput);
+  phoneInput.addEventListener('paste', () => {
+    setTimeout(() => {
+      phoneInput.value = sanitizePhoneNumber(phoneInput.value);
+      if (phoneInput.value.length === 10) {
+        clearError('user-phone', 'error-phone');
+      }
+    }, 0);
   });
 
   // Clear errors on input
@@ -290,10 +312,11 @@ function initLeadForm() {
     }
 
     // Indian 10-digit Phone Validation (starts with 6, 7, 8, or 9)
-    const phoneVal = phoneInput.value.trim();
+    const phoneVal = sanitizePhoneNumber(phoneInput.value.trim());
+    phoneInput.value = phoneVal;
     const phoneRegex = /^[6-9]\d{9}$/;
     if (!phoneRegex.test(phoneVal)) {
-      setError('user-phone', 'error-phone', 'Please enter a valid 10-digit Indian mobile number.');
+      setError('user-phone', 'error-phone', 'Please enter a valid 10-digit mobile number.');
       isValid = false;
     } else {
       clearError('user-phone', 'error-phone');
@@ -351,10 +374,11 @@ function initLeadForm() {
     submitBtn.classList.add('is-loading');
     submitBtn.disabled = true;
 
+    const cleanPhone = sanitizePhoneNumber(phoneInput.value.trim());
     const payload = {
       name: nameInput.value.trim(),
-      number: `+91 ${phoneInput.value.trim()}`,
-      phone: `+91 ${phoneInput.value.trim()}`,
+      number: cleanPhone,
+      phone: cleanPhone,
       location: cityInput.value.trim(),
       city: cityInput.value.trim(),
       course: courseSelect.value,

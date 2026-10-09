@@ -220,17 +220,16 @@
                 <div class="form-group" id="group-name">
                   <label for="user-name" class="form-label text-white">Full name <span class="req text-red">*</span></label>
                   <div class="input-wrap">
-                    <input type="text" id="user-name" name="name" class="form-input form-input-dark" placeholder="Enter your full name" required autocomplete="name">
+                    <input type="text" id="user-name" name="name" class="form-input form-input-dark" placeholder="Enter your full name" required autocomplete="name" autocapitalize="words">
                   </div>
                   <span class="error-msg" id="error-name" role="alert" aria-live="polite"></span>
                 </div>
 
-                <!-- 2. Phone Number (10 digits India +91) -->
+                <!-- 2. Phone Number -->
                 <div class="form-group" id="group-phone">
                   <label for="user-phone" class="form-label text-white">Phone number <span class="req text-red">*</span></label>
-                  <div class="input-wrap phone-input-wrap">
-                    <span class="country-prefix">+91</span>
-                    <input type="tel" id="user-phone" name="phone" class="form-input form-input-dark phone-field" placeholder="98765 43210" maxlength="10" required autocomplete="tel">
+                  <div class="input-wrap">
+                    <input type="tel" id="user-phone" name="tel" class="form-input form-input-dark" placeholder="Enter your mobile number" maxlength="15" required autocomplete="tel" inputmode="tel">
                   </div>
                   <span class="error-msg" id="error-phone" role="alert" aria-live="polite"></span>
                 </div>
@@ -239,7 +238,7 @@
                 <div class="form-group" id="group-city">
                   <label for="user-city" class="form-label text-white">Location <span class="req text-red">*</span></label>
                   <div class="input-wrap">
-                    <input type="text" id="user-city" name="city" class="form-input form-input-dark" placeholder="City / Area" required>
+                    <input type="text" id="user-city" name="city" class="form-input form-input-dark" placeholder="City / Area" required autocomplete="address-level2" autocapitalize="words">
                   </div>
                   <span class="error-msg" id="error-city" role="alert" aria-live="polite"></span>
                 </div>
