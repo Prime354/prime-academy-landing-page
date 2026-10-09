@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prime Academy | Graphic Design, Video Editing & Motion Graphics Courses in Ahmedabad</title>
 
+  <script>
+    // Direct visits to /thankyou must immediately open the normal homepage URL
+    if (window.location.pathname.replace(/\/+$/, '').endsWith('/thankyou') || window.location.pathname.endsWith('/thankyou.html')) {
+      window.location.replace('/');
+    }
+  </script>
+
   <!-- Meta Pixel Code -->
   <script>
     !function(f,b,e,v,n,t,s)

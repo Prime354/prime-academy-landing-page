@@ -463,17 +463,10 @@ function initLeadForm() {
     }
   });
 
-  // If page is initially loaded directly on /thankyou (e.g., refresh or bookmark)
-  if (window.location.pathname.replace(/\/+$/, '') === '/thankyou') {
-    const formTitleGroup = document.getElementById('form-title-group');
-    if (formTitleGroup) formTitleGroup.style.display = 'none';
-    form.style.display = 'none';
-    if (successBox) {
-      successBox.style.display = 'block';
-      setTimeout(() => {
-        successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 150);
-    }
+  // If someone directly opens or pastes /thankyou into a new tab/browser window, redirect immediately to homepage
+  if (window.location.pathname.replace(/\/+$/, '').endsWith('/thankyou') || window.location.pathname.endsWith('/thankyou.html')) {
+    window.location.replace('/');
+    return;
   }
 }
 
